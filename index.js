@@ -22,6 +22,15 @@ const run = async () => {
     const productCollection = db.collection("products");
 
     app.get("/products", async (req, res) => {
+      const category = req.query.category;
+      if (category) {
+        const cursor = productCollection.find({ category: category });
+        const product = await cursor.toArray();
+
+        res.send({ status: true, data: product });
+        return;
+      }
+
       const cursor = productCollection.find({});
       const product = await cursor.toArray();
 
@@ -36,7 +45,7 @@ const run = async () => {
       res.send(result);
     });
 
-    app.get("/product/:id", async (req, res) => {
+    app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
 
       const result = await productCollection.findOne({ _id: ObjectId(id) });
